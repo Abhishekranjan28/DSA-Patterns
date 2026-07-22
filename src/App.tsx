@@ -1,9 +1,71 @@
-import { useMemo, useState } from 'react'
-import { Layers3, Search } from 'lucide-react'
-import { patterns } from './data/roadmap'
+import { patterns } from './data/roadmap';
+
+const difficultyClass = (difficulty: string) => difficulty.toLowerCase();
 
 export default function App() {
-  const [query, setQuery] = useState('')
-  const rows = useMemo(() => { const value = query.trim().toLowerCase(); return !value ? patterns : patterns.filter(row => [row.topic, row.pattern, row.subPattern, row.trigger, ...row.questions.map(question => question.title)].join(' ').toLowerCase().includes(value)) }, [query])
-  return <div className="syllabus"><header className="syllabus-header"><a className="brand" href="#top"><span><Layers3 size={19}/></span> DSA <b>Patterns</b></a><div className="top-search"><Search size={16}/><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search a topic, pattern, or question…"/></div></header><main id="top"><section className="syllabus-hero"><p className="eyebrow">INTERVIEW ROADMAP</p><h1>DSA patterns, <em>at a glance.</em></h1><p>60 interview-focused sub-patterns, each with a unique trigger and pattern-relevant canonical practice—no generic filler questions.</p></section><section className="table-card"><div className="table-caption"><div><p className="eyebrow">COMPLETE PATTERN TABLE</p><h2>{rows.length} sub-patterns</h2></div><span>Topic → Pattern → Sub-pattern → Trigger → Practice</span></div><div className="table-scroll"><table><thead><tr><th>#</th><th>DSA topic</th><th>Pattern</th><th>Sub-pattern</th><th>10-second trigger</th><th>Classical LeetCode questions</th></tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.topic}-${row.pattern}-${row.subPattern}`}><td className="row-number">{index + 1}</td><td>{row.topic}</td><td>{row.pattern}</td><td><strong>{row.subPattern}</strong></td><td className="trigger-cell">{row.trigger}</td><td><div className="question-links">{row.questions.map(question => <a key={question.url} href={question.url} target="_blank" rel="noreferrer"><span className={question.difficulty.toLowerCase()}>{question.difficulty}</span>{question.title} ↗</a>)}</div></td></tr>)}</tbody></table></div>{rows.length === 0 && <p className="empty-state">No matching patterns.</p>}</section></main></div>
+  return (
+    <div className="syllabus">
+      <header className="syllabus-header">
+        <a className="brand" href="#top">
+          <span>◎</span>
+          <b>DSA Tree</b>
+        </a>
+      </header>
+
+      <main>
+        <section className="syllabus-hero">
+          <h1>
+            Interview-ready <em>DSA roadmap</em>
+          </h1>
+          <p>
+            A compact, premium-style syllabus covering the most common interview patterns
+            from arrays and strings to trees, graphs, heaps, DP, and design.
+          </p>
+        </section>
+
+        <section className="table-card">
+          <div className="table-caption">
+            <h2>Pattern syllabus</h2>
+            <span>67 focused patterns • curated LeetCode practice</span>
+          </div>
+
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th className="row-number">#</th>
+                  <th>Topic</th>
+                  <th>Pattern</th>
+                  <th>Sub-pattern</th>
+                  <th>Trigger</th>
+                  <th>Questions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {patterns.map((row, index) => (
+                  <tr key={`${row.topic}-${row.pattern}-${row.subPattern}-${index}`}>
+                    <td>{index + 1}</td>
+                    <td>{row.topic}</td>
+                    <td>{row.pattern}</td>
+                    <td>{row.subPattern}</td>
+                    <td className="trigger-cell">{row.trigger}</td>
+                    <td>
+                      <div className="question-links">
+                        {row.questions.map((question) => (
+                          <a key={question.url} href={question.url} target="_blank" rel="noreferrer">
+                            <span className={difficultyClass(question.difficulty)}>{question.difficulty}</span>
+                            {question.title}
+                          </a>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
 }
